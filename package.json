@@ -1,0 +1,86 @@
+{
+  "name": "@adobe/aem-certificate-provider",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AEM Certificate Provider",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon",
+    "test": "c8 mocha  -i -g 'Post-Deploy'",
+    "test-postdeploy": "mocha -g 'Post-Deploy'",
+    "lint": "eslint .",
+    "semantic-release": "semantic-release",
+    "commit": "git-cz",
+    "build": "hedy -v",
+    "deploy": "hedy -v --deploy --test",
+    "deploy-routes": "hedy --no-build --no-hints -l major",
+    "deploy-ci": "hedy -v --deploy --test --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --cleanup-ci 24h",
+    "prepare": "husky install"
+  },
+  "wsk": {
+    "nodeVersion": 18,
+    "target": "aws",
+    "name": "helix3/certificate-provider@${version}",
+    "testUrl": "/_status_check/healthcheck.json",
+    "memory": 256,
+    "fastlyServiceId!important": "",
+    "awsRole!important": "arn:aws:iam::118435662149:role/helix-service-role-pipeline"
+  },
+  "mocha": {
+    "spec": "test/**/*.test.js",
+    "require": "test/setup-env.js",
+    "recursive": "true",
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/aem-certificate-provider"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/aem-certificate-provider/issues"
+  },
+  "homepage": "https://github.com/adobe/aem-certificate-provider#readme",
+  "dependencies": {
+    "@adobe/fetch": "4.1.1",
+    "@adobe/helix-shared-config": "10.3.9",
+    "@adobe/helix-shared-process-queue": "3.0.1",
+    "@adobe/helix-shared-wrap": "2.0.1",
+    "@adobe/helix-status": "10.0.11",
+  },
+  "devDependencies": {
+    "@adobe/eslint-config-helix": "2.0.5",
+    "@adobe/helix-deploy": "10.3.0",
+    "@adobe/helix-universal": "4.4.1",
+    "@adobe/semantic-release-coralogix": "1.1.27",
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/exec": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "c8": "9.1.0",
+    "dotenv": "16.3.2",
+    "eslint": "8.56.0",
+    "husky": "8.0.3",
+    "junit-report-builder": "3.1.0",
+    "lint-staged": "15.2.0",
+    "mocha": "10.2.0",
+    "mocha-multi-reporters": "1.5.1",
+    "nock": "13.5.0",
+    "nodemon": "3.0.3",
+    "semantic-release": "22.0.12",
+    "xml2js": "0.6.2"
+  },
+  "lint-staged": {
+    "*.js": "eslint"
+  },
+  "nodemonConfig": {
+    "exec": "node --inspect ./test/dev/server.mjs",
+    "watch": [
+      ".env",
+      "."
+    ],
+    "ext": ".js, .cjs, .ejs, .css"
+  }
+}
