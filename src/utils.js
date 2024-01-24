@@ -9,8 +9,33 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import { Response } from '@adobe/fetch';
+
 export async function isApexDomain(domain) {
   // this is stupid and wrong, but good for now
   // better: fetch https://publicsuffix.org/list/public_suffix_list.dat
-  return domain.split('.').length === 2;
+  return (domain.split('.').length) === 2;
+}
+
+export function isAcmeChallenge(domain) {
+  return domain.split('.')[0] === '_acme-challenge';
+}
+
+export function makeResponse(json, type, status = 200) {
+  if (type === 'json') {
+    return new Response(JSON.stringify(json), {
+      status,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  return new Response(Object
+    .entries(json.records)
+    .reduce(
+      (acc, [key, value]) => `${acc}
+${key}: ${Array.isArray(value) ? value.join(`\n${key}: `) : value}\n`,
+      'Please create following DNS records: ',
+    ), {
+    status,
+    headers: { 'Content-Type': 'text/plain' },
+  });
 }

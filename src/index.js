@@ -28,9 +28,7 @@ function run(request, context) {
   if (parts.indexOf('domain') === -1) {
     return new Response('This is not the service you\'ve been looking for', { status: 404 });
   }
-  const [prefix, domain] = parts.slice(parts.indexOf('domain'));
-  console.log('domain', domain);
-  console.log('prefix', prefix);
+  const [_, domain] = parts.slice(parts.indexOf('domain'));
 
   const contentType = (request.headers.get('content-type') || 'text/plain') === 'application/json' ? 'json' : 'text';
   if (request.method === 'POST' && !domain) {
@@ -42,7 +40,6 @@ function run(request, context) {
   if (request.method === 'GET' && domain) {
     return getDomainDetails(domain, request, context, contentType);
   }
-  console.error('Unsupported request', request.method, request.url);
   return new Response('Unsupported request', { status: 400 });
 }
 

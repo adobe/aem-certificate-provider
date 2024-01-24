@@ -10,16 +10,13 @@
  * governing permissions and limitations under the License.
  */
 import { Response } from '@adobe/fetch';
+import { isAcmeChallenge, isApexDomain, makeResponse } from './utils.js';
 
 export async function createDomain(domain, request, context) {
-  const { logger } = context;
-  logger.info('Not doing anything', domain);
   return new Response('Not yet implemented', { status: 201 });
 }
 
 export async function issueCertificate(domain, request, context) {
-  const { logger } = context;
-  logger.info('Not doing anything', domain);
   return new Response('Check status here', {
     status: 301,
     headers: { Location: `/domains/${domain}` },
@@ -27,7 +24,29 @@ export async function issueCertificate(domain, request, context) {
 }
 
 export async function getDomainDetails(domain, request, context, contentType) {
-  const { logger } = context;
-  logger.info('Not doing anything', domain, contentType);
-  return new Response('Not yet implemented', { status: 200 });
+  if (isAcmeChallenge(domain)) {
+    const CNAME = `${domain.replace('_acme-challenge.', '').replace(/\./g, '-')}.aemvalidations.net`;
+    const json = {
+      records: {
+        CNAME,
+      },
+    };
+    return makeResponse(json, contentType);
+  }
+  if (await isApexDomain(domain)) {
+    console.log('apex domain', domain);
+    const json = {
+      records: {
+        A: ['151.101.194.117', '151.101.66.117', '151.101.2.117', '151.101.130.117'],
+      },
+    };
+    return makeResponse(json, contentType);
+  } else {
+    const json = {
+      records: {
+        CNAME: 'cdn.aem.live',
+      },
+    };
+    return makeResponse(json, contentType);
+  }
 }
