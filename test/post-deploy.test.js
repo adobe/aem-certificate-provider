@@ -26,6 +26,7 @@ createTargets().forEach((target) => {
 
     it('index function rejects wrong prefix', async () => {
       const url = target.url('/foo');
+      console.log('testing', url);
       const res = await fetch(url);
       assert.strictEqual(res.status, 404);
     }).timeout(50000);
