@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 import wrap from '@adobe/helix-shared-wrap';
-import { logger as unilogger } from '@adobe/helix-universal-logger';
 import { helixStatus } from '@adobe/helix-status';
+import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import { createDomain, issueCertificate, getDomainDetails } from './handlers.js';
 
@@ -22,7 +22,7 @@ import { createDomain, issueCertificate, getDomainDetails } from './handlers.js'
  * @returns {Response} a response
  */
 function run(request, context) {
-  const { logger } = context;
+  const { logger: log } = context;
   const url = new URL(request.url);
   const { pathname } = url;
   // pathname is /helix-services/certificate-provider/ci7641176065/domain/example.com
@@ -31,8 +31,8 @@ function run(request, context) {
     return new Response('This is not the service you\'ve been looking for', { status: 404 });
   }
   const [prefix, domain] = parts.slice(parts.indexOf('domain'));
-  logger.info('domain', domain);
-  logger.info('prefix', prefix);
+  log.log('domain', domain);
+  log.log('prefix', prefix);
 
   const contentType = (request.headers.get('content-type') || 'text/plain') === 'application/json' ? 'json' : 'text';
   if (request.method === 'POST' && !domain) {
@@ -44,11 +44,11 @@ function run(request, context) {
   if (request.method === 'GET' && domain) {
     return getDomainDetails(domain, request, context, contentType);
   }
-  logger.error('Unsupported request', request.method, request.url);
+  log.error('Unsupported request', request.method, request.url);
   return new Response('Unsupported request', { status: 400 });
 }
 
 export const main = wrap(run)
   .with(helixStatus)
-  .with(unilogger.trace)
-  .with(unilogger);
+  .with(logger.trace)
+  .with(logger);
