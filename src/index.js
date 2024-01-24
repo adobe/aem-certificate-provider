@@ -13,7 +13,7 @@ import wrap from '@adobe/helix-shared-wrap';
 import { logger as unilogger } from '@adobe/helix-universal-logger';
 import { helixStatus } from '@adobe/helix-status';
 import { Response } from '@adobe/fetch';
-import { createDomain, issueCertificate, getDomainDetails } from './handlers';
+import { createDomain, issueCertificate, getDomainDetails } from './handlers.js';
 
 /**
  * This is the main function
