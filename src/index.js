@@ -25,10 +25,10 @@ function run(request, context) {
   const { logger } = context;
   const url = new URL(request.url);
   const { pathname } = url;
-  const [prefix, domain] = pathname.split('/');
+  const [_, prefix, domain] = pathname.split('/');
   const contentType = (request.headers.get('content-type') || 'text/plain') === 'application/json' ? 'json' : 'text';
   if (prefix !== 'domains') {
-    return new Response('This is not the service you\'ve been looking for', { status: 404 });
+    return new Response(`This is not the ${prefix} service you've been looking for`, { status: 404 });
   }
   if (request.method === 'POST' && !domain) {
     return createDomain(domain, request, context, contentType);

@@ -17,7 +17,7 @@ import { main } from '../src/index.js';
 
 describe('Index Tests', () => {
   it('index function is present', async () => {
-    const result = await main(new Request('https://localhost/'), {});
-    assert.strictEqual(await result.text(), 'This is not the service you\'ve been looking for');
+    const result = await main(new Request('https://localhost/foo'), {});
+    assert.strictEqual(await result.text(), 'This is not the foo service you\'ve been looking for');
   });
 });
