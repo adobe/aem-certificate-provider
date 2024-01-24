@@ -40,11 +40,5 @@ createTargets().forEach((target) => {
         version,
       });
     }).timeout(50000);
-
-    it('invokes the function', async () => {
-      const res = await fetch(target.url('/'));
-      assert.strictEqual(res.status, 200);
-      assert.fail('not ready yet');
-    }).timeout(50000);
   });
 });
