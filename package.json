@@ -24,8 +24,7 @@
     "name": "helix3/certificate-provider@${version}",
     "testUrl": "/_status_check/healthcheck.json",
     "memory": 256,
-    "fastlyServiceId!important": "",
-    "awsRole!important": "arn:aws:iam::118435662149:role/helix-service-role-pipeline"
+    "fastlyServiceId!important": ""
   },
   "mocha": {
     "spec": "test/**/*.test.js",
