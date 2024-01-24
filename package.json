@@ -49,7 +49,7 @@
     "@adobe/helix-shared-config": "10.3.9",
     "@adobe/helix-shared-process-queue": "3.0.1",
     "@adobe/helix-shared-wrap": "2.0.1",
-    "@adobe/helix-status": "10.0.11",
+    "@adobe/helix-status": "10.0.11"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.5",
