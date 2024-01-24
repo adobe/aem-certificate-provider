@@ -16,8 +16,17 @@ import { Request } from '@adobe/fetch';
 import { main } from '../src/index.js';
 
 describe('Index Tests', () => {
-  it('index function is present', async () => {
-    const result = await main(new Request('https://localhost/foo'), {});
-    assert.strictEqual(await result.text(), 'This is not the foo service you\'ve been looking for');
+  it('index function rejects wrong prefix', async () => {
+    const result = await main(new Request('https://localhost/helix-services/certificate-provider/ci7641176065/foo'), {
+      logger: console,
+    });
+    assert.strictEqual(await result.text(), 'This is not the service you\'ve been looking for');
+  });
+
+  it('index function rejects wrong requests', async () => {
+    const result = await main(new Request('https://localhost/helix-services/certificate-provider/ci7641176065/domain'), {
+      logger: console,
+    });
+    assert.strictEqual(result.status, 400);
   });
 });

@@ -25,11 +25,16 @@ function run(request, context) {
   const { logger } = context;
   const url = new URL(request.url);
   const { pathname } = url;
-  const [_, prefix, domain] = pathname.split('/');
-  const contentType = (request.headers.get('content-type') || 'text/plain') === 'application/json' ? 'json' : 'text';
-  if (prefix !== 'domains') {
-    return new Response(`This is not the ${prefix} service you've been looking for`, { status: 404 });
+  // pathname is /helix-services/certificate-provider/ci7641176065/domain/example.com
+  const parts = pathname.split('/').filter((p) => p.length > 0);
+  if (parts.indexOf('domain') === -1) {
+    return new Response('This is not the service you\'ve been looking for', { status: 404 });
   }
+  const [prefix, domain] = parts.slice(parts.indexOf('domain'));
+  logger.info('domain', domain);
+  logger.info('prefix', prefix);
+
+  const contentType = (request.headers.get('content-type') || 'text/plain') === 'application/json' ? 'json' : 'text';
   if (request.method === 'POST' && !domain) {
     return createDomain(domain, request, context, contentType);
   }
