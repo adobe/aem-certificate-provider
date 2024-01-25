@@ -60,6 +60,16 @@ describe('Index Tests', () => {
     assert.ok(text.includes('CNAME: example-com.aemvalidations.net'), text);
   });
 
+  it('index function handles correct acme-challenge domains', async () => {
+    const result = await main(new Request('https://localhost/helix-services/certificate-provider/ci7641176065/domain/_acme-challenge.aem.page'), {
+      logger: console,
+    });
+    assert.strictEqual(result.status, 200);
+    const text = await result.text();
+    assert.ok(text.includes('Please create following DNS records:'));
+    assert.ok(text.includes('CNAME: aem-page.aemvalidations.net'), text);
+  });
+
   it('index function handles apex as JSON', async () => {
     const result = await main(new Request('https://localhost/helix-services/certificate-provider/ci7641176065/domain/example.com', {
       headers: {

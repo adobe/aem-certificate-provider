@@ -40,7 +40,7 @@ export async function validateRecords(domain, records) {
   // merge results
   const allerrors = results.reduce((acc, { errors }) => [...acc, ...errors], []);
   if (allerrors.length > 0) {
-    const consolidatedError = new Error(`DNS validation failed: ${allerrors[0]}${allerrors.length > 1 ? ` and ${allerrors.length - 1} more errors` : ''}`);
+    const consolidatedError = new Error(`DNS validation failed: ${allerrors[0]} and ${allerrors.length - 1} more errors`);
     consolidatedError.errors = allerrors;
     throw consolidatedError;
   }
