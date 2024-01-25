@@ -21,11 +21,17 @@ export function isAcmeChallenge(domain) {
   return domain.split('.')[0] === '_acme-challenge';
 }
 
-export function makeResponse(json, type, status = 200) {
+export function makeResponse(json, type, status = 200, dnserrors = []) {
+  const headers = {
+    'Content-Type': type === 'json' ? 'application/json' : 'text/plain',
+  };
+  if (dnserrors.length > 0) {
+    [headers['X-Error']] = dnserrors;
+  }
   if (type === 'json') {
-    return new Response(JSON.stringify(json), {
+    return new Response(JSON.stringify({ ...json, errors: dnserrors }), {
       status,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
     });
   }
   return new Response(Object
@@ -36,6 +42,6 @@ ${key}: ${Array.isArray(value) ? value.join(`\n${key}: `) : value}\n`,
       'Please create following DNS records: ',
     ), {
     status,
-    headers: { 'Content-Type': 'text/plain' },
+    headers,
   });
 }

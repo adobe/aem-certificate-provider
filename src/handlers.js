@@ -11,6 +11,7 @@
  */
 import { Response } from '@adobe/fetch';
 import { isAcmeChallenge, isApexDomain, makeResponse } from './utils.js';
+import { validateRecords } from './dns.js';
 
 export async function createDomain(domain, request, context) {
   return new Response('Not yet implemented', { status: 201 });
@@ -24,29 +25,21 @@ export async function issueCertificate(domain, request, context) {
 }
 
 export async function getDomainDetails(domain, request, context, contentType) {
+  const json = {};
   if (isAcmeChallenge(domain)) {
     const CNAME = `${domain.replace('_acme-challenge.', '').replace(/\./g, '-')}.aemvalidations.net`;
-    const json = {
-      records: {
-        CNAME,
-      },
+    json.records = { CNAME };
+  } else if (await isApexDomain(domain)) {
+    json.records = {
+      A: ['151.101.194.117', '151.101.66.117', '151.101.2.117', '151.101.130.117'],
     };
-    return makeResponse(json, contentType);
-  }
-  if (await isApexDomain(domain)) {
-    console.log('apex domain', domain);
-    const json = {
-      records: {
-        A: ['151.101.194.117', '151.101.66.117', '151.101.2.117', '151.101.130.117'],
-      },
-    };
-    return makeResponse(json, contentType);
   } else {
-    const json = {
-      records: {
-        CNAME: 'cdn.aem.live',
-      },
-    };
-    return makeResponse(json, contentType);
+    json.records = { CNAME: 'cdn.aem.live' };
+  }
+  try {
+    await validateRecords(domain, json.records);
+    return makeResponse(json, contentType, 200);
+  } catch (e) {
+    return makeResponse(json, contentType, 202, e.errors);
   }
 }
