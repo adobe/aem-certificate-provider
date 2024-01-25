@@ -12,6 +12,8 @@
 import { resolveCname, resolve4 } from 'dns';
 import { promisify } from 'util';
 
+const { DNS } = require('@google-cloud/dns');
+
 const dnsresolvers = {
   CNAME: promisify(resolveCname),
   A: promisify(resolve4),
