@@ -12,7 +12,8 @@
 /* eslint-env mocha */
 
 import assert, { fail } from 'assert';
-import { validateRecords } from '../src/dns.js';
+import { copyFileSync } from 'fs';
+import { validateRecords, getApexDomain } from '../src/dns.js';
 
 describe('DNS Tests', () => {
   it('validateRecords complains about invalid records', async () => {
@@ -30,6 +31,22 @@ describe('DNS Tests', () => {
       fail('should have thrown');
     } catch (e) {
       assert.strictEqual(e.message, 'DNS validation failed: Missing CNAME record bar for example.com and 0 more errors');
+    }
+  });
+
+  it('getApexDomain returns apex domains', async () => {
+    const result = await getApexDomain('inside.corp.adobe.com');
+    assert.strictEqual(result, 'adobe.com');
+  });
+});
+
+describe('Google Cloud DNS Tests', () => {
+  it('create and delete a record', async function test() {
+    const key = process.env.GOOGLE_PRIVATE_KEY;
+    const email = process.env.GOOGLE_CLIENT_EMAIL;
+    const projectId = process.env.GOOGLE_PROJECT_ID;
+    if (!key || !email || !projectId) {
+      this.skip();
     }
   });
 });

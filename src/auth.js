@@ -24,7 +24,7 @@ export async function googleauth(email, key) {
 
   const gauth = new google.auth.GoogleAuth({
     // Scopes can be specified either as an array or as a single, space-delimited string.
-    scopes: ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/bigquery'],
+    scopes: ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/dns'],
     credentials,
   });
 
