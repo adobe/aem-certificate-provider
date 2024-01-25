@@ -1,3 +1,17 @@
+# [1.1.0](https://github.com/adobe/aem-certificate-provider/compare/v1.0.0...v1.1.0) (2024-01-25)
+
+
+### Bug Fixes
+
+* **dns:** check apexness of domain by validating presence of a SOA record ([6b0cfd3](https://github.com/adobe/aem-certificate-provider/commit/6b0cfd33d86a70e6b037a3d8220d69522e11f0d8))
+* **dns:** fix google dns creation and apex testing ([42f5558](https://github.com/adobe/aem-certificate-provider/commit/42f55588cc786d4bf87b2b884b81e26e4877ad50))
+
+
+### Features
+
+* **dns:** add helper functions for creating and deleting records ([46a6771](https://github.com/adobe/aem-certificate-provider/commit/46a6771d2babb93cbd1a6c7a58c2fbe6d0e428e6))
+* **google:** copy basic google auth from helix-run-query ([a3b7a56](https://github.com/adobe/aem-certificate-provider/commit/a3b7a560e69109e9e0926d1de1dc0ce549197bf9))
+
 # 1.0.0 (2024-01-25)
 
 
