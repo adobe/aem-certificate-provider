@@ -21,7 +21,7 @@
   "wsk": {
     "nodeVersion": 18,
     "target": "aws",
-    "name": "helix-services/certificate-provider@${version}",
+    "name": "helix3/certificate-provider@${version}",
     "testUrl": "/_status_check/healthcheck.json",
     "memory": 256,
     "fastlyServiceId!important": ""
