@@ -11,8 +11,9 @@
  */
 import { resolveCname, resolve4 } from 'dns';
 import { promisify } from 'util';
-
-const { DNS } = require('@google-cloud/dns');
+import { DNS } from '@google-cloud/dns';
+import { auth } from './auth.js';
+import { isApexDomain } from './utils.js';
 
 const dnsresolvers = {
   CNAME: promisify(resolveCname),
@@ -52,3 +53,46 @@ export async function validateRecords(domain, records) {
   }
   return true;
 }
+
+export async function getApexDomain(domain) {
+  if (await isApexDomain(domain)) {
+    return domain;
+  }
+  const parts = domain.split('.');
+  parts.shift();
+  if (parts.length <= 2) {
+    return parts.join('.');
+  }
+  return getApexDomain(parts.join('.'));
+}
+
+export const dnsProvider = {
+  init: async (email, key, projectId) => {
+    console.log('init DNS provider');
+    const credentials = await auth(email, key.replace(/\\n/g, '\n'));
+    this.dns = new DNS({ projectId, credentials });
+  },
+
+  createRecord: async (dnsRecord, type, recordValue, ttl) => {
+    console.log('create DNS record');
+    const zonename = (await getApexDomain(dnsRecord)).replace(/\./g, '-');
+    const zone = this.dns.zone(zonename);
+    const record = zone.record(type.toLowerCase(), {
+      name: dnsRecord,
+      ttl,
+      data: recordValue,
+    });
+    await zone.addRecords(record);
+  },
+  removeRecord: async (dnsRecord, type, recordValue = '', ttl = 1) => {
+    console.log('remove DNS record');
+    const zonename = (await getApexDomain(dnsRecord)).replace(/\./g, '-');
+    const zone = this.dns.zone(zonename);
+    const record = zone.record(type.toLowerCase(), {
+      name: dnsRecord,
+      ttl,
+      data: recordValue,
+    });
+    await zone.deleteRecords(record);
+  },
+};
