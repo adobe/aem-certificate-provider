@@ -47,6 +47,7 @@
     "@adobe/fetch": "4.1.1",
     "@adobe/helix-shared-config": "10.3.9",
     "@adobe/helix-shared-process-queue": "3.0.1",
+    "@adobe/helix-shared-secrets": "2.2.3",
     "@adobe/helix-shared-wrap": "2.0.1",
     "@adobe/helix-status": "10.0.11",
     "@adobe/helix-universal-logger": "^3.0.13",

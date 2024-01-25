@@ -11,6 +11,7 @@
  */
 import wrap from '@adobe/helix-shared-wrap';
 import { helixStatus } from '@adobe/helix-status';
+import secrets from '@adobe/helix-shared-secrets';
 import { Response } from '@adobe/fetch';
 import { createDomain, issueCertificate, getDomainDetails } from './handlers.js';
 
@@ -44,4 +45,5 @@ function run(request, context) {
 }
 
 export const main = wrap(run)
-  .with(helixStatus);
+  .with(helixStatus)
+  .with(secrets);
