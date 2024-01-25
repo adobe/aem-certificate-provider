@@ -49,7 +49,9 @@
     "@adobe/helix-shared-process-queue": "3.0.1",
     "@adobe/helix-shared-wrap": "2.0.1",
     "@adobe/helix-status": "10.0.11",
-    "@adobe/helix-universal-logger": "^3.0.13"
+    "@adobe/helix-universal-logger": "^3.0.13",
+    "@google-cloud/dns": "^4.0.0",
+    "googleapis": "^131.0.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.5",

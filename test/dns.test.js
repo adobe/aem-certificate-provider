@@ -12,7 +12,7 @@
 /* eslint-env mocha */
 
 import assert, { fail } from 'assert';
-import { validateRecords } from '../src/dns.js';
+import { validateRecords, getApexDomain, DNSProvider } from '../src/dns.js';
 
 describe('DNS Tests', () => {
   it('validateRecords complains about invalid records', async () => {
@@ -32,4 +32,29 @@ describe('DNS Tests', () => {
       assert.strictEqual(e.message, 'DNS validation failed: Missing CNAME record bar for example.com and 0 more errors');
     }
   });
+
+  it('getApexDomain returns apex domains', async () => {
+    assert.strictEqual(await getApexDomain('www.adobe.com'), 'adobe.com');
+    assert.strictEqual(await getApexDomain('www.adobe.co.uk'), 'adobe.co.uk');
+  });
+});
+
+describe('Google Cloud DNS Tests', () => {
+  it('create and delete a record', async function test() {
+    const key = process.env.GOOGLE_PRIVATE_KEY;
+    const email = process.env.GOOGLE_CLIENT_EMAIL;
+    const projectId = process.env.GOOGLE_PROJECT_ID;
+    if (!key || !email || !projectId) {
+      this.skip();
+    }
+
+    const dnsProvider = await new DNSProvider()
+      .withKey(key)
+      .withEmail(email)
+      .withProjectId(projectId)
+      .init();
+    await dnsProvider.createRecord('test.hlx.best', 'TXT', 'foo-bar-baz');
+
+    await dnsProvider.removeRecord('test.hlx.best', 'TXT', 'foo-bar-baz');
+  }).timeout(60000);
 });

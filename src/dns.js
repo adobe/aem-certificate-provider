@@ -11,6 +11,9 @@
  */
 import { resolveCname, resolve4 } from 'dns';
 import { promisify } from 'util';
+import { DNS } from '@google-cloud/dns';
+import { auth } from './auth.js';
+import { isApexDomain } from './utils.js';
 
 const dnsresolvers = {
   CNAME: promisify(resolveCname),
@@ -49,4 +52,72 @@ export async function validateRecords(domain, records) {
     throw consolidatedError;
   }
   return true;
+}
+
+export async function getApexDomain(domain) {
+  if (await isApexDomain(domain)) {
+    return domain;
+  }
+  const parts = domain.split('.');
+  parts.shift();
+  if (parts.length <= 2) {
+    return parts.join('.');
+  }
+  return getApexDomain(parts.join('.'));
+}
+
+function domainToRecordName(domain) {
+  return domain.replace(/([^.])$/, '$1.');
+}
+
+export class DNSProvider {
+  constructor() {
+    this.dns = null;
+    this.key = null;
+    this.email = null;
+    this.projectId = null;
+  }
+
+  withKey(key) {
+    this.key = key;
+    return this;
+  }
+
+  withEmail(email) {
+    this.email = email;
+    return this;
+  }
+
+  withProjectId(projectId) {
+    this.projectId = projectId;
+    return this;
+  }
+
+  async init() {
+    const credentials = await auth(this.email, this.key.replace(/\\n/g, '\n'));
+    this.dns = new DNS({ projectId: this.projectId, credentials });
+    return this;
+  }
+
+  async createRecord(dnsRecord, type, recordValue, ttl = 300) {
+    const zonename = (await getApexDomain(dnsRecord)).replace(/\./g, '-');
+    const zone = this.dns.zone(zonename);
+    const record = zone.record(type.toLowerCase(), {
+      name: domainToRecordName(dnsRecord),
+      ttl,
+      data: recordValue,
+    });
+    await zone.addRecords(record);
+  }
+
+  async removeRecord(dnsRecord, type, recordValue = '', ttl = 300) {
+    const zonename = (await getApexDomain(dnsRecord)).replace(/\./g, '-');
+    const zone = this.dns.zone(zonename);
+    const record = zone.record(type.toLowerCase(), {
+      name: domainToRecordName(dnsRecord),
+      ttl,
+      data: recordValue,
+    });
+    await zone.deleteRecords(record);
+  }
 }
