@@ -23,9 +23,13 @@ export async function validateRecords(domain, records) {
       if (!resolver) {
         throw new Error(`Unsupported record type ${type}`);
       }
-      const resolvedRecords = await resolver(domain);
-      if (resolvedRecords.length === 0) {
-        return { errors: `No ${type} records found for ${domain}` };
+      let resolvedRecords = [];
+      try {
+        resolvedRecords = await resolver(domain);
+      } catch (e) {
+        if (e.code !== 'ENODATA') {
+          return { errors: `No ${type} records found for ${domain}` };
+        }
       }
       const expected = Array.isArray(value) ? value : [value];
       const unexpected = resolvedRecords.filter((record) => !expected.includes(record));
