@@ -20,10 +20,7 @@ export async function isApexDomain(domain) {
     const soaRecords = await resolveSoaAsync(domain);
     return !!soaRecords;
   } catch (e) {
-    if (e.code === 'ENODATA') {
-      return false;
-    }
-    throw e;
+    return false;
   }
 }
 

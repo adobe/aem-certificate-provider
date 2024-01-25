@@ -12,8 +12,7 @@
 /* eslint-env mocha */
 
 import assert, { fail } from 'assert';
-import { copyFileSync } from 'fs';
-import { validateRecords, getApexDomain } from '../src/dns.js';
+import { validateRecords, getApexDomain, DNSProvider } from '../src/dns.js';
 
 describe('DNS Tests', () => {
   it('validateRecords complains about invalid records', async () => {
@@ -35,8 +34,8 @@ describe('DNS Tests', () => {
   });
 
   it('getApexDomain returns apex domains', async () => {
-    const result = await getApexDomain('inside.corp.adobe.com');
-    assert.strictEqual(result, 'adobe.com');
+    assert.strictEqual(await getApexDomain('www.adobe.com'), 'adobe.com');
+    assert.strictEqual(await getApexDomain('www.adobe.co.uk'), 'adobe.co.uk');
   });
 });
 
@@ -48,5 +47,14 @@ describe('Google Cloud DNS Tests', () => {
     if (!key || !email || !projectId) {
       this.skip();
     }
-  });
+
+    const dnsProvider = await new DNSProvider()
+      .withKey(key)
+      .withEmail(email)
+      .withProjectId(projectId)
+      .init();
+    await dnsProvider.createRecord('test.hlx.best', 'TXT', 'foo-bar-baz');
+
+    await dnsProvider.removeRecord('test.hlx.best', 'TXT', 'foo-bar-baz');
+  }).timeout(60000);
 });

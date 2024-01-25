@@ -66,33 +66,58 @@ export async function getApexDomain(domain) {
   return getApexDomain(parts.join('.'));
 }
 
-export const dnsProvider = {
-  init: async (email, key, projectId) => {
-    console.log('init DNS provider');
-    const credentials = await auth(email, key.replace(/\\n/g, '\n'));
-    this.dns = new DNS({ projectId, credentials });
-  },
+function domainToRecordName(domain) {
+  return domain.replace(/([^.])$/, '$1.');
+}
 
-  createRecord: async (dnsRecord, type, recordValue, ttl) => {
-    console.log('create DNS record');
+export class DNSProvider {
+  constructor() {
+    this.dns = null;
+    this.key = null;
+    this.email = null;
+    this.projectId = null;
+  }
+
+  withKey(key) {
+    this.key = key;
+    return this;
+  }
+
+  withEmail(email) {
+    this.email = email;
+    return this;
+  }
+
+  withProjectId(projectId) {
+    this.projectId = projectId;
+    return this;
+  }
+
+  async init() {
+    const credentials = await auth(this.email, this.key.replace(/\\n/g, '\n'));
+    this.dns = new DNS({ projectId: this.projectId, credentials });
+    return this;
+  }
+
+  async createRecord(dnsRecord, type, recordValue, ttl = 300) {
     const zonename = (await getApexDomain(dnsRecord)).replace(/\./g, '-');
     const zone = this.dns.zone(zonename);
     const record = zone.record(type.toLowerCase(), {
-      name: dnsRecord,
+      name: domainToRecordName(dnsRecord),
       ttl,
       data: recordValue,
     });
     await zone.addRecords(record);
-  },
-  removeRecord: async (dnsRecord, type, recordValue = '', ttl = 1) => {
-    console.log('remove DNS record');
+  }
+
+  async removeRecord(dnsRecord, type, recordValue = '', ttl = 300) {
     const zonename = (await getApexDomain(dnsRecord)).replace(/\./g, '-');
     const zone = this.dns.zone(zonename);
     const record = zone.record(type.toLowerCase(), {
-      name: dnsRecord,
+      name: domainToRecordName(dnsRecord),
       ttl,
       data: recordValue,
     });
     await zone.deleteRecords(record);
-  },
-};
+  }
+}

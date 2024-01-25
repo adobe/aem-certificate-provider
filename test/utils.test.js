@@ -15,8 +15,9 @@ import { isApexDomain } from '../src/utils.js';
 
 describe('Utils Tests', () => {
   it('isApexDomain returns true for apex domains', async () => {
-    const result = await isApexDomain('example.com');
-    assert.strictEqual(result, true);
+    assert.strictEqual(await isApexDomain('example.com'), true);
+    assert.strictEqual(await isApexDomain('adobe.com'), true);
+    assert.strictEqual(await isApexDomain('adobe.co.uk'), true, 'adobe.co.uk is an apex domain');
   });
 
   it('isApexDomain returns false for non-apex domains', async () => {
