@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/adobe/aem-certificate-provider/compare/v1.1.0...v1.1.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* **index:** change wrapping order ([8dc5c79](https://github.com/adobe/aem-certificate-provider/commit/8dc5c798fdd09125a9d254f6278d30ac70d436cb))
+* **index:** use secrets from AWS ([480cab7](https://github.com/adobe/aem-certificate-provider/commit/480cab7773ee60e16be980021c9bc35dfc569c04))
+
 # [1.1.0](https://github.com/adobe/aem-certificate-provider/compare/v1.0.0...v1.1.0) (2024-01-25)
 
 
