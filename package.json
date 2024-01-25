@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon",
-    "test": "c8 mocha  -i -g 'Post-Deploy'",
+    "test": "c8 --reporter=text --reporter=lcov mocha  -i -g 'Post-Deploy'",
     "test-postdeploy": "mocha -g 'Post-Deploy'",
     "lint": "eslint .",
     "semantic-release": "semantic-release",
@@ -21,11 +21,10 @@
   "wsk": {
     "nodeVersion": 18,
     "target": "aws",
-    "name": "helix3/certificate-provider@${version}",
+    "name": "helix-services/certificate-provider@${version}",
     "testUrl": "/_status_check/healthcheck.json",
     "memory": 256,
-    "fastlyServiceId!important": "",
-    "awsRole!important": "arn:aws:iam::118435662149:role/helix-service-role-pipeline"
+    "fastlyServiceId!important": ""
   },
   "mocha": {
     "spec": "test/**/*.test.js",
@@ -50,7 +49,7 @@
     "@adobe/helix-shared-process-queue": "3.0.1",
     "@adobe/helix-shared-wrap": "2.0.1",
     "@adobe/helix-status": "10.0.11",
-    "@adobe/helix-universal-logger": "3.0.13"
+    "@adobe/helix-universal-logger": "^3.0.13"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.5",

@@ -24,27 +24,17 @@ createTargets().forEach((target) => {
       fetchContext.reset();
     });
 
-    it('returns the status of the function', async () => {
-      const url = target.url('/_status_check/healthcheck.json');
+    it('index function rejects wrong prefix', async () => {
+      const url = target.url('/foo');
+      console.log('testing', url);
       const res = await fetch(url);
-      assert.strictEqual(res.status, 200);
-      const json = await res.json();
-      delete json.process;
-      delete json.response_time;
-      // status returns 0.0.0+ci123 for ci versions
-      const version = target.version.startsWith('ci')
-        ? `0.0.0+${target.version}`
-        : target.version;
-      assert.deepStrictEqual(json, {
-        status: 'OK',
-        version,
-      });
+      assert.strictEqual(res.status, 404);
     }).timeout(50000);
 
-    it('invokes the function', async () => {
-      const res = await fetch(target.url('/'));
-      assert.strictEqual(res.status, 200);
-      assert.fail('not ready yet');
+    it('index function rejects wrong requests', async () => {
+      const url = target.url('/domain');
+      const res = await fetch(url);
+      assert.strictEqual(res.status, 400);
     }).timeout(50000);
   });
 });
