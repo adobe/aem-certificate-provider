@@ -52,11 +52,13 @@
     "@adobe/helix-status": "10.0.11",
     "@adobe/helix-universal-logger": "^3.0.13",
     "@google-cloud/dns": "^4.0.0",
-    "googleapis": "^132.0.0"
+    "googleapis": "^132.0.0",
+    "acme-client": "^5.2.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.6",
     "@adobe/helix-deploy": "11.0.4",
+    "@adobe/helix-universal-devserver": "1.1.3",
     "@adobe/helix-universal": "4.4.1",
     "@adobe/semantic-release-coralogix": "1.1.27",
     "@semantic-release/changelog": "6.0.3",

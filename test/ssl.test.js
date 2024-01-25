@@ -19,12 +19,12 @@ describe('Test SSL Utils', () => {
     const valid = await getCertificateValidity('https://www.example.com');
     assert.ok(valid > new Date(), `Certificate is expired on ${valid}`);
     await checkCertificate('https://www.example.com');
-  }).timeout(10000);
+  }).timeout(20000);
 
   it('expired.badssl.com has an expired certificate', async () => {
     const valid = await getCertificateValidity('https://expired.badssl.com');
     assert.ok(valid < new Date(), `Certificate is still valid until ${valid}`);
-  }).timeout(10000);
+  }).timeout(20000);
 
   it('nope.example.com does not resolve', async () => {
     try {
@@ -33,7 +33,7 @@ describe('Test SSL Utils', () => {
     } catch (e) {
       assert.ok(e.message.includes('getaddrinfo ENOTFOUND nope.example.com'));
     }
-  }).timeout(10000);
+  }).timeout(20000);
 
   it('wrong-host.badssl.com has a no matching host', async () => {
     try {
@@ -44,7 +44,7 @@ describe('Test SSL Utils', () => {
         throw e;
       }
     }
-  }).timeout(10000);
+  }).timeout(20000);
 
   it('revoked.badssl.com is revoked', async () => {
     try {
