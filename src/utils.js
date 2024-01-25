@@ -10,11 +10,21 @@
  * governing permissions and limitations under the License.
  */
 import { Response } from '@adobe/fetch';
+import { resolveSoa } from 'dns';
+import { promisify } from 'util';
+
+const resolveSoaAsync = promisify(resolveSoa);
 
 export async function isApexDomain(domain) {
-  // this is stupid and wrong, but good for now
-  // better: fetch https://publicsuffix.org/list/public_suffix_list.dat
-  return (domain.split('.').length) === 2;
+  try {
+    const soaRecords = await resolveSoaAsync(domain);
+    return !!soaRecords;
+  } catch (e) {
+    if (e.code === 'ENODATA') {
+      return false;
+    }
+    throw e;
+  }
 }
 
 export function isAcmeChallenge(domain) {
