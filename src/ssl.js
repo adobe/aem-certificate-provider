@@ -41,8 +41,14 @@ export async function getCertificate(url, rejectUnauthorized = true) {
 export async function checkCertificate(url) {
   const cert = await getCertificate(url);
   if (!cert.isValid) {
-    throw new Error('Certificate is not valid');
+    const e = new Error('Certificate is not valid');
+    e.errors = ['Certificate is not valid'];
+    if (cert.valid_to && new Date(cert.valid_to) < new Date()) {
+      e.errors.push(`Certificate expired on ${cert.valid_to}`);
+    }
+    throw e;
   }
+  return new Date(cert.valid_to);
 }
 
 /**

@@ -38,6 +38,8 @@ describe('Index Tests', () => {
     const text = await result.text();
     assert.ok(text.includes('Please create following DNS records:'));
     assert.ok(text.includes('CNAME: cdn.aem.live'), text);
+    assert.ok(result.headers.get('x-remaining-certificate-validity'), 'Missing remaining certificate validity header');
+    assert.ok(Number.parseInt(result.headers.get('x-remaining-certificate-validity'), 10) > 0, 'Remaining certificate validity is not positive');
   });
 
   it('index function handles apex domains', async () => {

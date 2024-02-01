@@ -14,7 +14,7 @@
 import assert from 'assert';
 import { getCertificateValidity, checkCertificate } from '../src/ssl.js';
 
-describe.only('Test SSL Utils', () => {
+describe('Test SSL Utils', () => {
   it('www.example.com has a valid certificate', async () => {
     const valid = await getCertificateValidity('https://www.example.com');
     assert.ok(valid > new Date(), `Certificate is expired on ${valid}`);
