@@ -15,7 +15,8 @@ export async function getCertificate(url, rejectUnauthorized = true) {
   const p = new Promise((resolve, reject) => {
     const req = https.request(url, {
       requestCert: true, // we want this, after all
-      rejectUnauthorized, // we check this by default, and try again if it fails
+      rejectUnauthorized, // we check this by default, and try again if it fails,
+      agent: false, // don't use a global agent, so that we don't get TLS session caching
     }, (res) => {
       const cert = res.socket.getPeerCertificate();
       // don't forget to close the connection!
