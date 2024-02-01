@@ -99,4 +99,24 @@ describe('Index Tests', () => {
       ],
     });
   });
+
+  it('index function handles expired non-apex as JSON', async () => {
+    const result = await main(new Request('https://localhost/helix-services/certificate-provider/ci7641176065/domain/expired.badssl.com', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }), {
+      logger: console,
+    });
+    assert.strictEqual(result.status, 202);
+    const json = await result.json();
+    assert.deepStrictEqual(json.records, {
+      CNAME: 'cdn.aem.live',
+
+    });
+    assert.equal(json.errors.length, 3, 'Expected 3 errors');
+    assert.equal(json.errors[0], 'Missing CNAME record cdn.aem.live for expired.badssl.com');
+    assert.ok(json.errors[1].includes('Certificate is not valid'));
+    assert.ok(json.errors[2].includes('Certificate expired on '));
+  });
 });
