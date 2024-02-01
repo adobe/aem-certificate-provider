@@ -12,12 +12,13 @@
 /* eslint-env mocha */
 
 import assert from 'assert';
-import { getCertificateValidity, getCertificate } from '../src/ssl.js';
+import { getCertificateValidity, checkCertificate } from '../src/ssl.js';
 
 describe.only('Test SSL Utils', () => {
   it('www.example.com has a valid certificate', async () => {
     const valid = await getCertificateValidity('https://www.example.com');
     assert.ok(valid > new Date(), `Certificate is expired on ${valid}`);
+    await checkCertificate('https://www.example.com');
   }).timeout(10000);
 
   it('expired.badssl.com has an expired certificate', async () => {
@@ -34,8 +35,25 @@ describe.only('Test SSL Utils', () => {
     }
   }).timeout(10000);
 
-  it('self-signed.badssl.com has a self-signed certificate', async () => {
-    const cert = await getCertificate('https://self-signed.badssl.com');
-    console.log(cert);
+  it('wrong-host.badssl.com has a no matching host', async () => {
+    try {
+      await checkCertificate('https://wrong-host.badssl.com');
+      assert.fail('Expected an error');
+    } catch (e) {
+      if (e.message === 'Expected an error') {
+        throw e;
+      }
+    }
+  }).timeout(10000);
+
+  it('revoked.badssl.com is revoked', async () => {
+    try {
+      await checkCertificate('https://revoked.badssl.com');
+      assert.fail('Expected an error');
+    } catch (e) {
+      if (e.message === 'Expected an error') {
+        throw e;
+      }
+    }
   }).timeout(10000);
 });

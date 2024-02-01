@@ -11,27 +11,38 @@
  */
 import https from 'https';
 
-export async function getCertificate(url) {
+export async function getCertificate(url, rejectUnauthorized = true) {
   const p = new Promise((resolve, reject) => {
     const req = https.request(url, {
       requestCert: true, // we want this, after all
-      rejectUnauthorized: false, // we don't care about self-signed certs or expired certs
+      rejectUnauthorized, // we check this by default, and try again if it fails
     }, (res) => {
       const cert = res.socket.getPeerCertificate();
       // don't forget to close the connection!
       res.socket.end();
-      if (cert) {
-        resolve(cert);
-      } else {
+      if (cert && Object.keys(cert).length > 0) {
+        resolve({ ...cert, isValid: rejectUnauthorized });
+      } /* c8 ignore next 3 */ else {
         reject(new Error('No certificate found'));
       }
     });
     req.on('error', (e) => {
+      if (e.code === 'CERT_HAS_EXPIRED' && rejectUnauthorized) {
+        // try again, but don't check the certificate
+        resolve(getCertificate(url, false));
+      }
       reject(e);
     });
     req.end();
   });
   return p;
+}
+
+export async function checkCertificate(url) {
+  const cert = await getCertificate(url);
+  if (!cert.isValid) {
+    throw new Error('Certificate is not valid');
+  }
 }
 
 /**
