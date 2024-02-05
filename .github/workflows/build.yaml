@@ -28,7 +28,7 @@ jobs:
           GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
           GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
           GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -50,7 +50,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::118435662149:role/helix-gh-deploy-config-service
       - name: Fetch AWS Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           parse-json-secrets: true
           secret-ids: |
