@@ -38,6 +38,8 @@ describe('Index Tests', () => {
     const text = await result.text();
     assert.ok(text.includes('Please create following DNS records:'));
     assert.ok(text.includes('CNAME: cdn.aem.live'), text);
+    assert.ok(result.headers.get('x-remaining-certificate-validity'), 'Missing remaining certificate validity header');
+    assert.ok(Number.parseInt(result.headers.get('x-remaining-certificate-validity'), 10) > 0, 'Remaining certificate validity is not positive');
   });
 
   it('index function handles apex domains', async () => {
@@ -96,5 +98,25 @@ describe('Index Tests', () => {
         'Missing A record 151.101.130.117 for example.com',
       ],
     });
+  });
+
+  it('index function handles expired non-apex as JSON', async () => {
+    const result = await main(new Request('https://localhost/helix-services/certificate-provider/ci7641176065/domain/expired.badssl.com', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }), {
+      logger: console,
+    });
+    assert.strictEqual(result.status, 202);
+    const json = await result.json();
+    assert.deepStrictEqual(json.records, {
+      CNAME: 'cdn.aem.live',
+
+    });
+    assert.equal(json.errors.length, 3, 'Expected 3 errors');
+    assert.equal(json.errors[0], 'Missing CNAME record cdn.aem.live for expired.badssl.com');
+    assert.ok(json.errors[1].includes('Certificate is not valid'));
+    assert.ok(json.errors[2].includes('Certificate expired on '));
   });
 });

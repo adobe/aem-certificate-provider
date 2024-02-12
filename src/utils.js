@@ -28,8 +28,9 @@ export function isAcmeChallenge(domain) {
   return domain.split('.')[0] === '_acme-challenge';
 }
 
-export function makeResponse(json, type, status = 200, dnserrors = []) {
+export function makeResponse(json, type, status = 200, dnserrors = [], extraHeaders = {}) {
   const headers = {
+    ...extraHeaders,
     'Content-Type': type === 'json' ? 'application/json' : 'text/plain',
   };
   if (dnserrors.length > 0) {

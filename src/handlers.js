@@ -12,11 +12,14 @@
 import { Response } from '@adobe/fetch';
 import { isAcmeChallenge, isApexDomain, makeResponse } from './utils.js';
 import { validateRecords } from './dns.js';
+import { checkCertificate } from './ssl.js';
 
+// eslint-disable-next-line no-unused-vars
 export async function createDomain(domain, request, context) {
   return new Response('Not yet implemented', { status: 201 });
 }
 
+// eslint-disable-next-line no-unused-vars
 export async function issueCertificate(domain, request, context) {
   return new Response('Check status here', {
     status: 301,
@@ -36,10 +39,19 @@ export async function getDomainDetails(domain, request, context, contentType) {
   } else {
     json.records = { CNAME: 'cdn.aem.live' };
   }
+
+  const certerrors = [];
+  const defaultHeaders = {};
+  try {
+    const validTo = await checkCertificate(`https://${domain}`);
+    defaultHeaders['x-remaining-certificate-validity'] = Math.round((validTo - new Date()) / (1000 * 60 * 60 * 24));
+  } catch (e) {
+    certerrors.push(...(e.errors || [e.message]));
+  }
   try {
     await validateRecords(domain, json.records);
-    return makeResponse(json, contentType, 200);
+    return makeResponse(json, contentType, 200, certerrors, defaultHeaders);
   } catch (e) {
-    return makeResponse(json, contentType, 202, e.errors);
+    return makeResponse(json, contentType, 202, [...e.errors, ...certerrors], defaultHeaders);
   }
 }
