@@ -1,3 +1,17 @@
+# [1.2.0](https://github.com/adobe/aem-certificate-provider/compare/v1.1.1...v1.2.0) (2024-02-12)
+
+
+### Bug Fixes
+
+* **ssl:** do not permit tls session cache ([82786b1](https://github.com/adobe/aem-certificate-provider/commit/82786b15b08823273c8231ce62f436ef74c0fcb0))
+* **ssl:** more roubust ssl validation ([c98b17e](https://github.com/adobe/aem-certificate-provider/commit/c98b17e4c745f52e1c49eba6534a2571cea44eab))
+
+
+### Features
+
+* **index:** report on remaining or missing certificate validity ([4f99433](https://github.com/adobe/aem-certificate-provider/commit/4f994333d6f0b61dbd6725fd25654f10207bc247))
+* **ssl:** some utility functions for certificate validation ([00f7e27](https://github.com/adobe/aem-certificate-provider/commit/00f7e2700d3af4a62b7e7a0b1d56f9dd0ea87f69))
+
 ## [1.1.1](https://github.com/adobe/aem-certificate-provider/compare/v1.1.0...v1.1.1) (2024-01-25)
 
 
