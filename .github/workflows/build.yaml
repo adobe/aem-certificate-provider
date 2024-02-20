@@ -28,6 +28,9 @@ jobs:
           GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
           GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
           GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+          LETSENCRYPT_ACCOUNT_EMAIL: ${{ secrets.LETSENCRYPT_ACCOUNT_EMAIL }}
+          LETSENCRYPT_ACCOUNT_KEY: ${{ secrets.LETSENCRYPT_ACCOUNT_KEY }}
+          LETSENCRYPT_ACCOUNT_URL: ${{ secrets.LETSENCRYPT_ACCOUNT_URL }}
       - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -76,3 +79,6 @@ jobs:
           GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
           GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
           GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+          LETSENCRYPT_ACCOUNT_EMAIL: ${{ secrets.LETSENCRYPT_ACCOUNT_EMAIL }}
+          LETSENCRYPT_ACCOUNT_KEY: ${{ secrets.LETSENCRYPT_ACCOUNT_KEY }}
+          LETSENCRYPT_ACCOUNT_URL: ${{ secrets.LETSENCRYPT_ACCOUNT_URL }}

@@ -11,8 +11,9 @@
  */
 import { Response } from '@adobe/fetch';
 import { isAcmeChallenge, isApexDomain, makeResponse } from './utils.js';
-import { validateRecords } from './dns.js';
+import { validateRecords, DNSProvider } from './dns.js';
 import { checkCertificate } from './ssl.js';
+import { Acme } from './acme.js';
 
 // eslint-disable-next-line no-unused-vars
 export async function createDomain(domain, request, context) {
@@ -20,11 +21,42 @@ export async function createDomain(domain, request, context) {
 }
 
 // eslint-disable-next-line no-unused-vars
-export async function issueCertificate(domain, request, context) {
-  return new Response('Check status here', {
-    status: 301,
-    headers: { Location: `/domains/${domain}` },
-  });
+export async function issueCertificate(domain, request, context, contentType) {
+  const key = process.env.GOOGLE_PRIVATE_KEY;
+  const email = process.env.GOOGLE_CLIENT_EMAIL;
+  const projectId = process.env.GOOGLE_PROJECT_ID;
+
+  const accountEmail = process.env.LETSENCRYPT_ACCOUNT_EMAIL;
+  const accountUrl = process.env.LETSENCRYPT_ACCOUNT_URL;
+  const accountKey = process.env.LETSENCRYPT_ACCOUNT_KEY;
+  const retries = process.env.LETSENCRYPT_RETRIES ? parseInt(process.env.LETSENCRYPT_RETRIES) : 10;
+
+  const dnsProvider = await new DNSProvider()
+    .withKey(key)
+    .withEmail(email)
+    .withProjectId(projectId)
+    .init();
+
+
+  const acme = new Acme({ accountEmail, accountUrl, accountKey, retries }, dnsProvider);
+
+
+  const certerrors = [];
+  const defaultHeaders = {};
+  const json = {};
+
+  defaultHeaders.Location = `/domains/${domain}`;
+  const challengeCNAME = `${domain.replace(/\./g, '-')}.aemvalidations.net`;
+
+  try {
+    const cert = await acme.generateCertificate(domain, challengeCNAME);
+    json.certificate = cert.cert;
+    json.intermediate = cert.intCert;
+  } catch (e) {
+    certerrors.push(...(e.errors || [e.message]));
+  }
+
+  return makeResponse(json, contentType, 201, certerrors, defaultHeaders);
 }
 
 export async function getDomainDetails(domain, request, context, contentType) {
