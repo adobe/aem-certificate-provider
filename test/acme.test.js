@@ -11,7 +11,7 @@
  */
 /* eslint-env mocha */
 
-import assert from 'assert';
+import assert, { fail } from 'assert';
 import { Acme, createAcmeAccount } from '../src/acme.js';
 import { DNSProvider } from '../src/dns.js';
 
@@ -36,7 +36,7 @@ describe('ACME Tests', () => {
     await dnsProvider.removeRecord('test-aem-wtf.aemvalidations.net', 'TXT', recordValue, 5);
   });
 
-  it('generateCertificate for real', async function () {
+  it('generateCertificate - success with good challenge', async function () {
     const key = process.env.GOOGLE_PRIVATE_KEY;
     const email = process.env.GOOGLE_CLIENT_EMAIL;
     const projectId = process.env.GOOGLE_PROJECT_ID;
@@ -61,6 +61,36 @@ describe('ACME Tests', () => {
     assert.ok(cert.key);
     assert.ok(cert.csr);
     assert.ok(cert.cert);
+  }).timeout(60000);
+
+  it('generateCertificate - fail with wrong challenge', async function () {
+    const key = process.env.GOOGLE_PRIVATE_KEY;
+    const email = process.env.GOOGLE_CLIENT_EMAIL;
+    const projectId = process.env.GOOGLE_PROJECT_ID;
+
+    const accountEmail = process.env.LETSENCRYPT_ACCOUNT_EMAIL;
+    const accountUrl = process.env.LETSENCRYPT_ACCOUNT_URL;
+    const accountKey = process.env.LETSENCRYPT_ACCOUNT_KEY;
+  
+    if (!key || !email || !projectId || !accountEmail || !accountUrl || !accountKey) {
+      this.skip();
+    }
+
+    const dnsProvider = await new DNSProvider()
+      .withKey(key)
+      .withEmail(email)
+      .withProjectId(projectId)
+      .init();
+
+    const retries = 1; // fail faster to speed test
+    const acme = new Acme({ accountEmail, accountKey, accountUrl, retries }, dnsProvider);
+
+    try {
+      await acme.generateCertificate('wrong.aem.wtf', 'wrong-aem-wtf.aemvalidations.net');
+      fail('certificate should not be generated');
+    } catch(e) {
+      assert.ok(e.message.includes('No TXT records found for name'));
+    }
   }).timeout(60000);
 
   it('createAcmeAccount - used for initial setup', async function () {

@@ -70,6 +70,7 @@ export class Acme {
     this.accountEmail = opts.accountEmail;
     this.accountKey = opts.accountKey;
     this.accountUrl = opts.accountUrl;
+    this.retries = opts.retries ?? 10;
     this.dnsProvider = dnsProvider;
   }
 
@@ -79,7 +80,10 @@ export class Acme {
       directoryUrl: this.accountUrl.includes('staging') ? acme.directory.letsencrypt.staging 
         : acme.directory.letsencrypt.production,
       accountKey: Buffer.from(this.accountKey, 'base64'),
-      accountUrl: this.accountUrl.toLowerCase()
+      accountUrl: this.accountUrl.toLowerCase(),
+      backoffAttempts: this.retries,
+      backoffMin: 5000,
+      backoffMax: 30000,
     });
 
     acme.setLogger(log);
@@ -99,7 +103,6 @@ export class Acme {
       },
     };
 
-    /* Certificate */
     const certChain = await client.auto({
       csr,
       email: this.accountEmail,
@@ -109,9 +112,6 @@ export class Acme {
         challengeCreate(authz, challenge, keyAuthorization, dnsProviderWrapper),
       challengeRemoveFn: (authz, challenge, keyAuthorization) => 
         challengeRemove(authz, challenge, keyAuthorization, dnsProviderWrapper),
-      backoffAttempts: 10,
-      backoffMin: 5000,
-      backoffMax: 30000,
     });
 
     const [cert, intCert] = certChain.split('\n\n');
