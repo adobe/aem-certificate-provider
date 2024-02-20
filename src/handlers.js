@@ -40,15 +40,16 @@ export async function issueCertificate(domain, request, context, contentType) {
 
   const acme = new Acme({ accountEmail, accountUrl, accountKey, retries }, dnsProvider);
 
-  const challengeCNAME = `${domain.replace(/\./g, '-')}.aemvalidations.net`;
 
   const certerrors = [];
   const defaultHeaders = {};
   const json = {};
 
+  defaultHeaders.Location = `/domains/${domain}`;
+  const challengeCNAME = `${domain.replace(/\./g, '-')}.aemvalidations.net`;
+
   try {
     const cert = await acme.generateCertificate(domain, challengeCNAME);
-    defaultHeaders.Location = `/domains/${domain}`;
     json.certificate = cert.cert;
     json.intermediate = cert.intCert;
   } catch (e) {
