@@ -12,7 +12,7 @@
 import acme from 'acme-client';
 
 function log(m) {
-  console.log(m);
+  //console.log(m);
 }
 
 /**

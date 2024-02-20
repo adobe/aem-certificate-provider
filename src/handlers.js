@@ -29,6 +29,7 @@ export async function issueCertificate(domain, request, context, contentType) {
   const accountEmail = process.env.LETSENCRYPT_ACCOUNT_EMAIL;
   const accountUrl = process.env.LETSENCRYPT_ACCOUNT_URL;
   const accountKey = process.env.LETSENCRYPT_ACCOUNT_KEY;
+  const retries = process.env.LETSENCRYPT_RETRIES ? parseInt(process.env.LETSENCRYPT_RETRIES) : 10;
 
   const dnsProvider = await new DNSProvider()
     .withKey(key)
@@ -36,7 +37,8 @@ export async function issueCertificate(domain, request, context, contentType) {
     .withProjectId(projectId)
     .init();
 
-  const acme = new Acme({ accountEmail, accountUrl, accountKey }, dnsProvider);
+
+  const acme = new Acme({ accountEmail, accountUrl, accountKey, retries }, dnsProvider);
 
   const challengeCNAME = `${domain.replace(/\./g, '-')}.aemvalidations.net`;
 
