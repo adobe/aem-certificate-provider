@@ -45,7 +45,7 @@
   "homepage": "https://github.com/adobe/aem-certificate-provider#readme",
   "dependencies": {
     "@adobe/fetch": "4.1.1",
-    "@adobe/helix-shared-config": "10.3.12",
+    "@adobe/helix-shared-config": "10.4.0",
     "@adobe/helix-shared-process-queue": "3.0.1",
     "@adobe/helix-shared-secrets": "2.2.5",
     "@adobe/helix-shared-wrap": "2.0.1",
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.6",
-    "@adobe/helix-deploy": "11.0.8",
+    "@adobe/helix-deploy": "11.0.10",
     "@adobe/helix-universal": "4.5.0",
     "@adobe/semantic-release-coralogix": "1.1.27",
     "@semantic-release/changelog": "6.0.3",
