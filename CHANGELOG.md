@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/adobe/aem-certificate-provider/compare/v1.2.0...v1.2.1) (2024-03-30)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-shared-process-queue to v3.0.2 ([5143127](https://github.com/adobe/aem-certificate-provider/commit/51431272e8d090f1ac5359ef0288e55ff702dada))
+
 # [1.2.0](https://github.com/adobe/aem-certificate-provider/compare/v1.1.1...v1.2.0) (2024-02-12)
 
 
