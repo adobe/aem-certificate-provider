@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/adobe/aem-certificate-provider/compare/v1.2.1...v1.2.2) (2024-04-10)
+
+
+### Bug Fixes
+
+* **deps:** update external major ([#18](https://github.com/adobe/aem-certificate-provider/issues/18)) ([3d9e248](https://github.com/adobe/aem-certificate-provider/commit/3d9e2482fe59a27e3473fe3bd86f9fe23f120340))
+
 ## [1.2.1](https://github.com/adobe/aem-certificate-provider/compare/v1.2.0...v1.2.1) (2024-03-30)
 
 
