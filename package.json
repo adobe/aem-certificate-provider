@@ -52,7 +52,7 @@
     "@adobe/helix-status": "10.0.12",
     "@adobe/helix-universal-logger": "^3.0.13",
     "@google-cloud/dns": "^4.0.0",
-    "googleapis": "^134.0.0"
+    "googleapis": "^137.0.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.6",
